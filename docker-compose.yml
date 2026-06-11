@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: TP5_BD
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: node_app
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:postgres@db:5432/TP5_BD
+    depends_on:
+      - db
+
+volumes:
+  db_data:
